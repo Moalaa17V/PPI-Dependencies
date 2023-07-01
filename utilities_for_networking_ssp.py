@@ -2,6 +2,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import requests
 
+def edge_weight_dic(start_protein, end_protein, G):
+    edge_weight_dictionary = {}
+    for tail, head in G.edges():
+        edge_data = G.get_edge_data(tail, head)
+        edge_weight = edge_data.get('edge_weight', 1)
+        edge_weight_dictionary[(tail, head)] = edge_weight
+    return edge_weight_dictionary
+
 def find_shortest_paths(start_protein, end_protein, edge_weight, G):
     shortest_paths = []
     for path in nx.all_shortest_paths(G, start_protein, end_protein, weight=edge_weight):
@@ -10,7 +18,6 @@ def find_shortest_paths(start_protein, end_protein, edge_weight, G):
             path_score = sum(G[u][v][edge_weight] for u, v in zip(path[:-1], path[1:]))
             path_weights = [G[u][v][edge_weight] for u, v in zip(path[:-1], path[1:])]
             shortest_paths.append((path, path_score, path_weights))
-    
     return shortest_paths
 
 def find_directly_connected_proteins(protein, G):
